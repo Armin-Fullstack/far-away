@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 
 interface PackingItemProps {
   packObj: {
@@ -8,6 +8,7 @@ interface PackingItemProps {
     packed: boolean;
   };
   onDeletePack: (id: string) => void;
+  onTogglePack: (id: string) => void;
 }
 interface Pack {
   description: string;
@@ -21,6 +22,7 @@ interface FormProps {
 interface PackingListsProps {
   pack: Pack[];
   onDeletePack: (id: string) => void;
+  onTogglePack: (id: string) => void;
 }
 function App(): JSX.Element {
   const [pack, setPack] = useState<Pack[]>([]);
@@ -35,11 +37,23 @@ function App(): JSX.Element {
       })
     );
   }
+  // Toggle pack item
+  function handleTogglePack(id: string): void {
+    setPack((pack) =>
+      pack.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
   return (
     <div className="app">
       <Logo />
       <Form onAddPack={handleAddPackItems} />
-      <PackingLists pack={pack} onDeletePack={handleDeletePack} />
+      <PackingLists
+        pack={pack}
+        onDeletePack={handleDeletePack}
+        onTogglePack={handleTogglePack}
+      />
       <Stats />
     </div>
   );
@@ -93,8 +107,11 @@ function Form({ onAddPack }: FormProps): JSX.Element {
     </form>
   );
 }
-
-function PackingLists({ pack, onDeletePack }: PackingListsProps): JSX.Element {
+function PackingLists({
+  pack,
+  onDeletePack,
+  onTogglePack,
+}: PackingListsProps): JSX.Element {
   // removing each pack is happening in this component but state lives in parent component(App) => child-to-parent communication
   return (
     <div className="list">
@@ -105,6 +122,7 @@ function PackingLists({ pack, onDeletePack }: PackingListsProps): JSX.Element {
               packObj={packingItem}
               key={packingItem.id}
               onDeletePack={onDeletePack}
+              onTogglePack={onTogglePack}
             />
           );
         })}
@@ -112,9 +130,18 @@ function PackingLists({ pack, onDeletePack }: PackingListsProps): JSX.Element {
     </div>
   );
 }
-function PackingItem({ packObj, onDeletePack }: PackingItemProps): JSX.Element {
+function PackingItem({
+  packObj,
+  onDeletePack,
+  onTogglePack,
+}: PackingItemProps): JSX.Element {
   return (
     <li>
+      <input
+        type="checkbox"
+        value={packObj.packed.toString()}
+        onChange={() => onTogglePack(packObj.id)}
+      />
       <span style={packObj.packed ? { textDecoration: "line-through" } : {}}>
         {packObj.quantity} {packObj.description}
       </span>
