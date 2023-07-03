@@ -23,6 +23,7 @@ interface PackingListsProps {
   pack: Pack[];
   onDeletePack: (id: string) => void;
   onTogglePack: (id: string) => void;
+  onClearList: () => void;
 }
 function App(): JSX.Element {
   const [pack, setPack] = useState<Pack[]>([]);
@@ -45,6 +46,14 @@ function App(): JSX.Element {
       )
     );
   }
+  //clear list
+  function handleClearList(): void {
+    const isConfirmed = confirm(
+      "Are you sure that you want to delete all items?"
+    );
+    // isConfirmed && setPack([])
+    if (isConfirmed) setPack([]);
+  }
   return (
     <div className="app">
       <Logo />
@@ -53,6 +62,7 @@ function App(): JSX.Element {
         pack={pack}
         onDeletePack={handleDeletePack}
         onTogglePack={handleTogglePack}
+        onClearList={handleClearList}
       />
       <Stats pack={pack} />
     </div>
@@ -111,17 +121,28 @@ function PackingLists({
   pack,
   onDeletePack,
   onTogglePack,
+  onClearList,
 }: PackingListsProps): JSX.Element {
   // removing each pack is happening in this component but state lives in parent component(App) => child-to-parent communication
 
-  const [sort , setSort] = useState("input")
+  const [sort, setSort] = useState("input");
 
   //sorting an array depends on initinal array(Deriving state)
   let sortedPack: Pack[];
-  sort === "input" && (sortedPack = pack)
-  sort === "description" && (sortedPack = pack.slice().sort((a,b) => a.description.localeCompare(b.description)))
-  // pack.sort() => mutate
-  sort === "packed" && (sortedPack = pack.slice().sort((a,b) => +a.packed - +b.packed))
+  switch (sort) {
+    case "description":
+      sortedPack = pack.slice().sort((a, b) =>
+       // pack.sort() => mutate
+        a.description.localeCompare(b.description)
+      );
+      break;
+    case "packed":
+      sortedPack = pack.slice().sort((a, b) => +a.packed - +b.packed);
+      break;
+    default:
+      sortedPack = pack;
+      break;
+  }
 
   return (
     <div className="list">
@@ -139,11 +160,17 @@ function PackingLists({
       </ul>
       <div className="actions">
         {/* Transform to controlled element */}
-        <select value={sort} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSort(e.target.value)}> 
+        <select
+          value={sort}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+            setSort(e.target.value)
+          }
+        >
           <option value="input">Sort by input order</option>
           <option value="description">Sort by description</option>
           <option value="packed">Sort by packed status</option>
         </select>
+        <button onClick={onClearList}>Clear List</button>
       </div>
     </div>
   );
@@ -167,7 +194,7 @@ function PackingItem({
     </li>
   );
 }
-function Stats({ pack }: PackingListsProps): JSX.Element {
+function Stats({ pack }: { pack: Pack[] }): JSX.Element {
   if (!pack.length)
     // conditional rendering(return)
     return (
