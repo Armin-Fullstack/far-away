@@ -1,3 +1,5 @@
+import { Pack } from "../types";
+
 export default function Stats({ pack }: { pack: Pack[] }): JSX.Element {
   if (!pack.length)
     // conditional rendering(return)

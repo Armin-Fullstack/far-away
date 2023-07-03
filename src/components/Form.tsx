@@ -1,5 +1,5 @@
 import { SyntheticEvent, useState } from "react";
-
+import { FormProps , Pack} from "../types";
 export default function Form({ onAddPack }: FormProps): JSX.Element {
   const [description, setDescription] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);

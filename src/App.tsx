@@ -4,31 +4,8 @@ import Form from "./components/Form";
 import PackingLists from "./components/PackingLists";
 import Stats from "./components/Stats";
 
-interface PackingItemProps {
-  packObj: {
-    id: string;
-    description: string;
-    quantity: number;
-    packed: boolean;
-  };
-  onDeletePack: (id: string) => void;
-  onTogglePack: (id: string) => void;
-}
-interface Pack {
-  description: string;
-  quantity: number;
-  packed: boolean;
-  id: string;
-}
-interface FormProps {
-  onAddPack: (packItem: Pack) => void;
-}
-interface PackingListsProps {
-  pack: Pack[];
-  onDeletePack: (id: string) => void;
-  onTogglePack: (id: string) => void;
-  onClearList: () => void;
-}
+import {Pack} from "./types"
+
 function App(): JSX.Element {
   const [pack, setPack] = useState<Pack[]>([]);
   function handleAddPackItems(packItem: Pack): void {

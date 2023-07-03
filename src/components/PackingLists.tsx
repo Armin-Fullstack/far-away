@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PackingItem from "./PackingItem";
+import {PackingListsProps , Pack} from "../types"
 
 export default function PackingLists({
   pack,

@@ -1,3 +1,5 @@
+import {PackingItemProps} from "../types"
+
 export default function PackingItem({
   packObj,
   onDeletePack,
