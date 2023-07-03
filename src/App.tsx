@@ -113,10 +113,20 @@ function PackingLists({
   onTogglePack,
 }: PackingListsProps): JSX.Element {
   // removing each pack is happening in this component but state lives in parent component(App) => child-to-parent communication
+
+  const [sort , setSort] = useState("input")
+
+  //sorting an array depends on initinal array(Deriving state)
+  let sortedPack: Pack[];
+  sort === "input" && (sortedPack = pack)
+  sort === "description" && (sortedPack = pack.slice().sort((a,b) => a.description.localeCompare(b.description)))
+  // pack.sort() => mutate
+  sort === "packed" && (sortedPack = pack.slice().sort((a,b) => +a.packed - +b.packed))
+
   return (
     <div className="list">
       <ul>
-        {pack.map((packingItem) => {
+        {sortedPack.map((packingItem) => {
           return (
             <PackingItem
               packObj={packingItem}
@@ -127,6 +137,14 @@ function PackingLists({
           );
         })}
       </ul>
+      <div className="actions">
+        {/* Transform to controlled element */}
+        <select value={sort} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSort(e.target.value)}> 
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+      </div>
     </div>
   );
 }
